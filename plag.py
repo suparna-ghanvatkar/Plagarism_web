@@ -2,6 +2,15 @@ import string,cgi,time
 from os import curdir, sep
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
+matched_lines=""
+text1=""
+text2=""
+perc=0
+
+def plag():
+	global text1,text2,matched_lines,perc
+	
+
 class MyHandler(BaseHTTPRequestHandler):
 
     def do_GET(self):
@@ -14,17 +23,21 @@ class MyHandler(BaseHTTPRequestHandler):
 			f.close()
 			return 
 
-	def do_POST(self):
-        ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
-       	if ctype == 'multipart/form-data':
-        	query=cgi.parse_multipart(self.rfile, pdict)
-        self.send_response(301)
-        self.end_headers()
-        upcontent1 = query.get('text1')
-		upcontent2 = query.get('text2')
-        self.wfile.write("<HTML>POST OK.<BR><BR>");
-        self.wfile.write(upcontent1[0])
-		return
+    def do_POST(self):
+        global matched_lines,perc,text1,text2
+        try:
+            ctype, pdict = cgi.parse_header(self.headers.getheader('content-type'))
+            if ctype == 'multipart/form-data':
+                query=cgi.parse_multipart(self.rfile, pdict)
+            self.send_response(301)
+            
+            self.end_headers()
+            text1 = query.get('text1')
+            text2 = query.get('text2')
+            self.wfile.write(matched_lines)
+            self.wfile.write(perc)			
+        except :
+            pass
 
 def main():
 	try:
@@ -37,6 +50,9 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+
 
 
 
